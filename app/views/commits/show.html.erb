@@ -16,20 +16,24 @@
       </div>
     <% end %>
 
-    <div id="voice">
-      I have a <%= f.select :tone, Voice.tones.map{ |tone| [tone.titlecase, tone] } %>, <%= f.text_field :comment %> <%= content_tag :button, "Send!", :type => :submit %>
-    </div>
+    <% unless @commit.diff.blank?%>
+      <div id="voice">
+        I have a <%= f.select :tone, Voice.tones.map{ |tone| [tone.titlecase, tone] } %>, <%= f.text_area :comment, :rows => 5 %> <%= content_tag :button, "Send!", :type => :submit %>
+      </div>
+    <% end %>
   <% end %>
 </div>
 
 <div id="diff">
-  <pre><%= @commit.diff_source %></pre>
-  <div id="download"><%= link_to "Download", @commit.diff.url %></div>
+  <% if @commit.diff.blank? %>
+    No diff file has been uploaded.  Please upload a diff file or remove this commit.
+  <% else %>
+    <pre><%= @commit.diff_source %></pre>
+    <div id="download"><%= link_to "Download", @commit.diff.url %></div>
+  <% end %>
 </div>
 
 <p id="links">
-  <% if current_user == @commit.user %>
-    <%= link_to 'Edit', edit_commit_path(@commit) %> or
-  <% end %>
+  <%= link_to 'Edit', edit_commit_path(@commit) %> or
   <%= link_to 'Back', root_path %>
 </p>
